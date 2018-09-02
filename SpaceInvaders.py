@@ -24,12 +24,24 @@ while not exit:
         if(event.type == pygame.KEYDOWN):
             if(event.key == pygame.K_RIGHT):
                 pos_x_m = 10
+                player = pygame.image.load("SpaceShipRight.png")
             if(event.key == pygame.K_LEFT):
                 pos_x_m = -10
+                player = pygame.image.load("SpaceShipLeft.png")
             if (event.key == pygame.K_UP):
                 pos_y_m = -10
+                player = pygame.image.load("SpaceShip.png")
             if (event.key == pygame.K_DOWN):
                 pos_y_m= 10
+                player = pygame.image.load("SpaceShipDown.png")
+    if pos_x >  800:
+        pos_x = 0
+    if pos_x < 0:
+        pos_x = 800
+    if pos_y < 0:
+        pos_y = 600
+    if pos_y > 600:
+        pos_y = 0
     pos_x += pos_x_m
     pos_y += pos_y_m
     clock.tick(30)
