@@ -1,6 +1,10 @@
 import pygame
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+
+HEIGHT = 800
+WIDTH = 800
+
+screen = pygame.display.set_mode((HEIGHT, WIDTH))
 black = (0, 0, 0)
 white = (255, 255, 255)
 pos_x = 300
@@ -8,45 +12,41 @@ pos_y = 150
 pos_x_m = 0
 pos_y_m = 0
 exit = False
-player = pygame.image.load("SpaceShip.png")
 clock = pygame.time.Clock()
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("SpaceShip.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = pos_x
+        self.rect.y = pos_y
+        self.speedx = 0
+    def update(self):
+        self.speedx = 0
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_LEFT]:
+            self.speedx = -5
+        if keystate[pygame.K_RIGHT]:
+            self.speedx = 5
+        self.rect.x += self.speedx
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
+sprites = pygame.sprite.Group()
+player = Player()
+sprites.add(player)
 while not exit:
     for event in pygame.event.get():
         if(event.type == pygame.QUIT):
             exit = True
-        if (event.type == pygame.KEYUP):
-            if(event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
-                pos_x_m = 0
-            if (event.key == pygame.K_UP):
-                pos_y_m = 0
-            if (event.key == pygame.K_DOWN):
-                pos_y_m = 0
-        if(event.type == pygame.KEYDOWN):
-            if(event.key == pygame.K_RIGHT):
-                pos_x_m = 10
-                player = pygame.image.load("SpaceShipRight.png")
-            if(event.key == pygame.K_LEFT):
-                pos_x_m = -10
-                player = pygame.image.load("SpaceShipLeft.png")
-            if (event.key == pygame.K_UP):
-                pos_y_m = -10
-                player = pygame.image.load("SpaceShip.png")
-            if (event.key == pygame.K_DOWN):
-                pos_y_m= 10
-                player = pygame.image.load("SpaceShipDown.png")
-    if pos_x >  800:
-        pos_x = 0
-    if pos_x < 0:
-        pos_x = 800
-    if pos_y < 0:
-        pos_y = 600
-    if pos_y > 600:
-        pos_y = 0
     pos_x += pos_x_m
     pos_y += pos_y_m
     clock.tick(30)
     screen.fill(white)
-    screen.blit(player, [pos_x, pos_y])
+    sprites.draw(screen)
+    sprites.update()
     pygame.display.update()
 pygame.quit()
 quit()
