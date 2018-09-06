@@ -1,21 +1,25 @@
 import pygame
 import random
+import os
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
 
 HEIGHT = 800
-WIDTH = 800
+WIDTH = 600
 
 screen = pygame.display.set_mode((HEIGHT, WIDTH))
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (255, 0, 0)
 pos_x = 20
-pos_y = 700
+pos_y = 500
 pos_x_m = 0
 pos_y_m = 0
-kills1 = 0
+kIn = 0
+Kills = 0
 exit = False
 clock = pygame.time.Clock()
+font =  pygame.font.Font('Consolas.ttf', 36)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -79,28 +83,37 @@ for i in range(8):
     sprites.add(mob)
     mobs.add(mob)
 while not exit:
+    killCounter = font.render("Kills:" + str(Kills), True, black)
     for event in pygame.event.get():
         if(event.type == pygame.QUIT):
             exit = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
                 player.shoot()
-    kills = pygame.sprite.groupcollide(mobs, bullets, True, True)
-    if kills:
+    hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
+    if hits:
         mob = Mobs()
         mobs.add(mob)
         sprites.add(mob)
-        kills1 += 1
-        print(kills1)
-    kills  = pygame.sprite.spritecollide(player, mobs, False)
-    if kills:
+        kIn += 1
+        Kills += 1
+
+    death  = pygame.sprite.spritecollide(player, mobs, False)
+    if death:
         player.kill()
         exit = True
+    if kIn == 10:
+        kIn = 0
+        for i in range(2):
+            mob = Mobs()
+            sprites.add(mob)
+            mobs.add(mob)
     pos_x += pos_x_m
     pos_y += pos_y_m
     clock.tick(30)
     sprites.update()
     screen.fill(white)
+    screen.blit(killCounter, [0, 0])
     sprites.draw(screen)
     sprites.update()
     pygame.display.update()
